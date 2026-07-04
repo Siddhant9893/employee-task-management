@@ -175,3 +175,5 @@ Backend:
 cd backend
 npm run build
 ```
+
+DEMO VIDEO: https://drive.google.com/file/d/1mmQro3jPOuUtkwt0cu2fcVelxeVRfBxx/view?usp=sharing
