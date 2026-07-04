@@ -1,0 +1,19 @@
+flowchart LR
+  User[Admin / Employee] --> Browser[React + TypeScript Frontend]
+  Browser --> Router[React Router Protected Routes]
+  Browser --> Redux[Redux Toolkit Auth State]
+  Browser --> Query[TanStack Query Server State]
+  Browser --> API[Axios API Client]
+
+  API --> Express[Node.js + Express API]
+  Express --> Auth[JWT Auth Middleware]
+  Express --> Role[Role Middleware]
+  Express --> Upload[Multer Upload Middleware]
+  Express --> Controllers[Controllers]
+  Controllers --> Services[Service Layer]
+  Services --> Prisma[Prisma ORM]
+  Prisma --> MySQL[(MySQL Database)]
+
+  Express --> Cron[node-cron Due Tomorrow Job]
+  Cron --> Services
+  Upload --> Files[backend/uploads]

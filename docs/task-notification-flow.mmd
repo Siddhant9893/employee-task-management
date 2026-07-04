@@ -1,0 +1,18 @@
+sequenceDiagram
+  participant Admin
+  participant Frontend
+  participant API
+  participant DB as MySQL
+  participant Employee
+
+  Admin->>Frontend: Create task
+  Frontend->>API: POST /api/tasks
+  API->>DB: Create task
+  API->>DB: Create TASK_ASSIGNED notification
+  API-->>Frontend: Task created
+  Employee->>Frontend: Open notification bell
+  Frontend->>API: GET /api/notifications
+  API-->>Frontend: Notification list
+  Employee->>Frontend: Click notification
+  Frontend->>API: PUT /api/notifications/:id/read
+  Frontend->>Frontend: Open related task

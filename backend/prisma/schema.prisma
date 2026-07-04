@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum NotificationType {
+  TASK_ASSIGNED
+  TASK_DUE
+  TASK_COMPLETED
+}
+
+model User {
+  id            String   @id @default(uuid())
+
+  fullName      String
+  email         String   @unique
+  passwordHash  String
+
+  role          Role
+
+  department    String?
+  designation   String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  assignedTasks Task[] @relation("AssignedTasks")
+  createdTasks  Task[] @relation("CreatedTasks")
+
+  notifications Notification[]
+
+  @@index([email])
+}
+
+model Task {
+  id            String @id @default(uuid())
+
+  title         String
+  description   String @db.Text
+
+  priority      TaskPriority
+  status        TaskStatus
+
+  startDate     DateTime
+  dueDate       DateTime
+
+  assignedToId  String
+  createdById   String
+
+  assignedTo User @relation("AssignedTasks", fields: [assignedToId], references: [id], onDelete: Cascade)
+
+  createdBy User @relation("CreatedTasks", fields: [createdById], references: [id], onDelete: Cascade)
+
+  attachments TaskAttachment[]
+
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([assignedToId])
+  @@index([status])
+}
+
+model TaskAttachment {
+  id String @id @default(uuid())
+
+  taskId String
+
+  fileName String
+
+  storedPath String
+
+  mimeType String
+
+  sizeBytes Int
+
+  uploadedBy String
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([taskId])
+}
+
+model Notification {
+  id String @id @default(uuid())
+
+  type NotificationType
+
+  message String
+
+  isRead Boolean @default(false)
+
+  userId String
+
+  taskId String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  task Task? @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
